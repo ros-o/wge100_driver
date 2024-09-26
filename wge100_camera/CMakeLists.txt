@@ -14,7 +14,6 @@ find_package(catkin REQUIRED
    std_msgs 
    sensor_msgs 
    message_generation
-   rostest
 )
 
 find_package(Boost REQUIRED COMPONENTS thread)
@@ -93,16 +92,20 @@ target_link_libraries(check_flash wge100camera)
 add_executable(read_all_flash src/utilities/read_all_flash.cpp)
 target_link_libraries(read_all_flash wge100camera)
 
-# Tests
-add_executable(wge100_sim test/wge100_sim.cc)
-target_link_libraries(wge100_sim wge100camera)
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
 
-add_executable(stress_discover test/cycle_tests/stress_discover.cpp)
-target_link_libraries(stress_discover wge100camera)
+  # Tests
+  add_executable(wge100_sim test/wge100_sim.cc)
+  target_link_libraries(wge100_sim wge100camera)
 
-add_rostest(test/test_with_sim_hztest.xml)
-# self_test/run_selftest is deprecated, see: http://wiki.ros.org/self_test
-#add_rostest(test/test_with_sim_selftest.xml)
+  add_executable(stress_discover test/cycle_tests/stress_discover.cpp)
+  target_link_libraries(stress_discover wge100camera)
+
+  add_rostest(test/test_with_sim_hztest.xml)
+  # self_test/run_selftest is deprecated, see: http://wiki.ros.org/self_test
+  #add_rostest(test/test_with_sim_selftest.xml)
+endif()
 
 # INSTALL
 install(TARGETS 
